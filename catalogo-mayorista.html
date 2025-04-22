@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Custom Wear (Revendedores)</title>
+    <link rel="stylesheet" href="styles/styles-catalogos.css">
+</head>
+
+<body>
+    <header class="banner">
+        <img src="img/banner.png" alt="Banner">
+    </header>
+
+    <div class="categoria-selector">
+        <button onclick="cambiarCategoria('Caballero')">Caballero</button>
+        <button onclick="cambiarCategoria('Dama')">Dama</button>
+        <button onclick="cambiarCategoria('Accesorios')">Accesorios</button>
+    </div>
+
+
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Buscar productos..." onkeyup="filterProducts()">
+        <button type="button" onclick="filterProducts()">🔍</button>
+    </div>
+
+    <div class="catalog-container">
+        <!-- Los productos se cargan aca automaticamente -->
+        <div id="products"></div>
+    </div>
+
+    <script>
+        let currentSheet = 'Caballero';
+
+        function cambiarCategoria(categoria) {
+            currentSheet = categoria;
+            loadProducts();
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            const products = document.querySelectorAll(".product");
+
+            products.forEach(product => {
+                const name = product.querySelector("h4").textContent.toLowerCase();
+                product.style.display = name.includes(searchTerm) ? "block" : "none";
+            });
+        }
+
+        async function loadProducts() {
+            const baseURL = 'https://docs.google.com/spreadsheets/d/1uKig237GzsXTYi2aPp-WPm8FOWWsb1QB4M4Wvufw_E8/gviz/tq?tqx=out:json&sheet=';
+            const response = await fetch(baseURL + currentSheet);
+            const text = await response.text();
+
+            const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+            const jsonData = JSON.parse(jsonText);
+            const rows = jsonData.table.rows;
+
+            const productsContainer = document.getElementById('products');
+            productsContainer.innerHTML = '';
+
+            rows.forEach(row => {
+                const item = {
+                    nombre: row.c[1]?.v || "Sin nombre",
+                    precio: row.c[2]?.v || 0,
+                    precioPromo: row.c[7]?.v || 0,
+                    imagen: row.c[4]?.v && row.c[4].v.trim() !== "" ? row.c[4].v : "img/imagen-generica.png",
+                    stock: row.c[8]?.v ? String(row.c[8].v).trim().toLowerCase() : "Sin Stock"
+                };
+
+                if (!item.stock.includes("sin stock")) {
+                    const productDiv = document.createElement('div');
+                    productDiv.className = 'product';
+
+                    productDiv.innerHTML = `
+                        <img src="${item.imagen}" alt="${item.nombre}" onerror="this.onerror=null; this.src='img/imagen-generica.png';">
+                        <h4>${item.nombre}</h4>
+                        <div class="price-container">
+                            <p class="price">Precio: $${item.precio}</p>
+                            <p class="promo-price">Precio Sugerido: $${item.precioPromo}</p>
+                        </div>
+                    `;
+                    productsContainer.appendChild(productDiv);
+                }
+            });
+        }
+
+        window.onload = loadProducts;
+    </script>
+
+</body>
+
+</html>
