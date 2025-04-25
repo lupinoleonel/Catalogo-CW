@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo Custom Wear</title>
     <link rel="stylesheet" href="styles/styles-catalogos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -13,46 +14,70 @@
         <img src="img/banner.png" alt="Banner">
     </header>
 
+    <!-- Botones de categoría -->
     <div class="categoria-selector">
         <button onclick="cambiarCategoria('Caballero')">Caballero</button>
         <button onclick="cambiarCategoria('Dama')">Dama</button>
         <button onclick="cambiarCategoria('Accesorios')">Accesorios</button>
     </div>
 
-
+    <!-- Barra de búsqueda -->
     <div class="search-container">
         <input type="text" id="search" placeholder="Buscar productos..." onkeyup="filterProducts()">
-        <button type="button" onclick="filterProducts()">🔍</button>
+        <button type="button" onclick="filterProducts()"><i class="fa-solid fa-magnifying-glass"></i></button>
     </div>
 
+    <!-- Contenedor de productos -->
     <div class="catalog-container">
-        <!-- Los productos se cargan aca automaticamente -->
         <div id="products"></div>
     </div>
 
+    <!-- Modal de imagen -->
+    <div id="imgModal" tabindex="-1" aria-hidden="true">
+        <img src="" alt="">
+    </div>
+
+    <!-- Script principal -->
     <script>
         let currentSheet = 'Caballero';
 
         function cambiarCategoria(categoria) {
             currentSheet = categoria;
+            history.pushState({ categoria }, '', `?cat=${categoria}`);
             loadProducts();
         }
 
         function filterProducts() {
             const searchTerm = document.getElementById("search").value.toLowerCase();
-            const products = document.querySelectorAll(".product");
+            history.pushState({ categoria: currentSheet, search: searchTerm }, '', `?cat=${currentSheet}&search=${encodeURIComponent(searchTerm)}`);
 
+            const products = document.querySelectorAll(".product");
             products.forEach(product => {
                 const name = product.querySelector("h4").textContent.toLowerCase();
                 product.style.display = name.includes(searchTerm) ? "block" : "none";
             });
         }
 
+        // Manejo del botón atrás del navegador
+        window.addEventListener('popstate', function () {
+            const params = new URLSearchParams(location.search);
+            const cat = params.get('cat') || 'Caballero';
+            const search = params.get('search') || '';
+
+            currentSheet = cat;
+
+            loadProducts().then(() => {
+                const input = document.getElementById("search");
+                input.value = search;
+                filterProducts();
+            });
+        });
+
+        // Cargar productos desde Google Sheets
         async function loadProducts() {
             const baseURL = 'https://docs.google.com/spreadsheets/d/1uKig237GzsXTYi2aPp-WPm8FOWWsb1QB4M4Wvufw_E8/gviz/tq?tqx=out:json&sheet=';
             const response = await fetch(baseURL + currentSheet);
             const text = await response.text();
-
             const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
             const jsonData = JSON.parse(jsonText);
             const rows = jsonData.table.rows;
@@ -86,9 +111,81 @@
             });
         }
 
-        window.onload = loadProducts;
+        // Carga inicial desde parámetros en la URL
+        window.onload = () => {
+            const params = new URLSearchParams(location.search);
+            const cat = params.get('cat') || 'Caballero';
+            const search = params.get('search') || '';
+
+            currentSheet = cat;
+
+            loadProducts().then(() => {
+                document.getElementById("search").value = search;
+                filterProducts();
+            });
+        };
+
+        // Ampliar imagen al hacer click y mostrar en modal
+        const modal = document.getElementById("imgModal");
+        const modalImg = modal.querySelector("img");
+
+        document.addEventListener("click", function (e) {
+            if (e.target.tagName === "IMG" && e.target.closest(".product")) {
+                modalImg.src = e.target.src;
+                modal.style.display = "flex";
+                document.body.style.overflow = "hidden";
+
+                // Agrega una entrada al historial para detectar cuando se toca "atrás"
+                history.pushState({ modalOpen: true }, "", "#modal");
+            }
+        });
+
+        // Manejo del cierre del modal
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) cerrarModal();
+        });
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && modal.style.display === "flex") cerrarModal();
+        });
+
+        function cerrarModal() {
+            modal.style.display = "none";
+            modalImg.src = "";
+            document.body.style.overflow = "";
+
+            // Si estamos en el historial del modal, retrocede
+            if (location.hash === "#modal") history.back();
+        }
+
+        // Manejo del cierre del modal al usar el botón "atrás"
+        // Si el usuario toca atrás cuando el modal está abierto, lo cerramos
+        window.addEventListener("popstate", function (event) {
+            if (location.hash === "" && modal.style.display === "flex") {
+                cerrarModal();
+            }
+        });
+
     </script>
 
+    <!-- Botón flotante para volver arriba -->
+    <button id="scrollTopBtn" title="Volver arriba"><i class="fa-solid fa-circle-chevron-up"></i></button>
+    <script>
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        window.onscroll = function () {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                scrollTopBtn.style.display = "block";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+        };
+
+        scrollTopBtn.onclick = function () {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        };
+    </script>
 </body>
 
 </html>
