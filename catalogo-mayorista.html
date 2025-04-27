@@ -1,3 +1,5 @@
+<!-- Custom Wear CBA - Página de inicio -->
+<!-- Custom Wear CBA - Catálogo de Revendedores -->
 <!DOCTYPE html>
 <html lang="es">
 
@@ -5,14 +7,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo Custom Wear (Revendedores)</title>
-    <link rel="stylesheet" href="styles/styles-catalogos.css">
+    <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-    <header class="banner">
-        <img src="img/banner.png" alt="Banner">
+    <header>
+        <img src="img/logo-customwear.png" alt="Custom Wear CBA">
     </header>
+
+    <section class="banner">
+        <img src="img/banner.png" alt="Banner">
+    </section>
 
     <!-- Botones de categoría -->
     <div class="categoria-selector">
@@ -102,14 +108,19 @@
                         <img src="${item.imagen}" alt="${item.nombre}" onerror="this.onerror=null; this.src='img/imagen-generica.png';">
                         <h4>${item.nombre}</h4>
                         <div class="price-container">
-                            <p class="price">Precio: $${item.precio}</p>
-                            <p class="promo-price">Precio Sugerido: $${item.precioPromo}</p>
+                        <p class="price">Precio: $${formatPrice(item.precio)}</p>
+                        <p class="promo-price">Precio Sugerido: $${formatPrice(item.precioPromo)}</p>
                         </div>
                     `;
                     productsContainer.appendChild(productDiv);
                 }
             });
         }
+        function formatPrice(value) {
+            if (!value) return '0';
+            return parseFloat(value).toLocaleString('es-AR'); // Formato argentino
+        }
+
 
         // Carga inicial desde parámetros en la URL
         window.onload = () => {
@@ -174,7 +185,7 @@
         const scrollTopBtn = document.getElementById("scrollTopBtn");
 
         window.onscroll = function () {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
                 scrollTopBtn.style.display = "block";
             } else {
                 scrollTopBtn.style.display = "none";
@@ -186,6 +197,16 @@
             document.documentElement.scrollTop = 0;
         };
     </script>
+
+    <footer>
+        <p>Contacto: customwear.cba@gmail.com | WhatsApp: <a href="https://wa.me/+5493518086096" target="_blank">+54 9
+                351 808 6096</a></p>
+        <p>Síguenos en:
+            <a href="https://www.instagram.com/customwear.cba" target="_blank">Instagram</a> |
+            <a href="https://www.facebook.com/customwear.cba" target="_blank">Facebook</a>
+        </p>
+        <p>© 2025 Custom Wear CBA. Todos los derechos reservados.</p>
+    </footer>
 </body>
 
 </html>

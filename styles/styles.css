@@ -1,0 +1,323 @@
+/* RESET Y FUENTE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Popins', sans-serif;
+    background-color: var(--color-fondo);
+}
+
+/* Variables de color */
+:root {
+    --color-principal: #1A1A1A;
+    --color-secundario: #ffffff;
+    --color-terciario: #4a4a4a;
+    --color-resaltar: #61a78e; 
+    /* #61A78E o #F5C518 */
+    --color-fondo: ghostwhite;
+}
+
+/* HEADER */
+header {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-principal);
+}
+
+header img {
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    height: 50px;
+}
+
+/* BANNER */
+.banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.banner img {
+    padding: 10px;
+    object-fit: contain;
+    height: auto;
+    object-fit: cover;
+    border-radius: 35px;
+}
+
+/* CONTENEDOR DE PRODUCTOS */
+.catalog-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* GRID DE PRODUCTOS */
+#products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* TARJETA DE PRODUCTO */
+.product {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* IMAGEN EN PRODUCTO */
+.product img {
+    height: 250px;
+    object-fit: contain;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.product img:hover {
+    transform: scale(1.05);
+}
+
+/* MODAL DE IMAGEN */
+#imgModal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+}
+
+#imgModal img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 12px;
+}
+
+#imgModal:focus {
+    outline: none;
+}
+
+/* TEXTO DE PRODUCTO */
+.product h3 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.product p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+/* PRECIO */
+.price-container {
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--color-principal);
+    border-radius: 8px;
+    color: white;
+}
+
+.price {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.promo-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-resaltar);
+}
+
+/* BÚSQUEDA */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.search-container input {
+    width: 60%;
+    padding: 10px;
+    border: 2px solid var(--color-resaltar);
+    border-radius: 25px 0 0 25px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.search-container input:focus {
+    border-color: var(--color-resaltar);
+}
+
+.search-container button {
+    padding: 10px 20px;
+    border: 2px solid var(--color-resaltar);
+    background-color: var(--color-resaltar);
+    color: white;
+    border-radius: 0 25px 25px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+.search-container button:hover {
+    background-color: var(--color-resaltar);
+}
+
+/* CATEGORÍAS */
+.categoria-selector {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.categoria-selector button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: var(--color-principal);
+    color: var(--color-secundario);
+    border-radius: 24px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.categoria-selector button:hover {
+    background-color: var(--color-terciario);
+}
+
+/* BOTONES */
+.botones {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px 0;
+    flex-wrap: wrap;
+}
+
+.boton {
+    background-color: var(--color-principal);
+    color: var(--color-secundario);
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 24px;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+    min-width: 200px;
+    text-align: center;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.boton:hover {
+    background-color: var(--color-secundario);
+}
+
+/* BOTÓN ARRIBA */
+#scrollTopBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--color-resaltar);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 12px 14px;
+    font-size: 24px;
+    cursor: pointer;
+    display: inline-block;
+    z-index: 1000;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+#scrollTopBtn:hover {
+    background-color: var(--color-resaltar);
+}
+
+/* Footer */
+footer {
+    position: absolute;
+    width: 100%;
+    background-color: var(--color-principal);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: var(--color-resaltar);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    #products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .banner img {
+        width: 100%;
+        height: auto;
+        border-radius: 15px;
+    }
+
+    .botones {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .boton {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #products {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .boton {
+        font-size: 1rem;
+        padding: 12px 25px;
+    }
+
+    footer {
+        font-size: 0.9rem;
+        position: absolute;
+        bottom: auto;
+        width: 100%;
+    }
+}
