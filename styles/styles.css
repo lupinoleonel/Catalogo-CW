@@ -15,6 +15,7 @@ body {
     --color-principal: #1A1A1A;
     --color-secundario: #ffffff;
     --color-terciario: #4a4a4a;
+    --color-terciario-2: grey;
     --color-resaltar: #61a78e; 
     /* #61A78E o #F5C518 */
     --color-fondo: ghostwhite;
@@ -159,7 +160,7 @@ header img {
 .search-container input {
     width: 60%;
     padding: 10px;
-    border: 2px solid var(--color-resaltar);
+    border: 2px solid var(--color-terciario-2);
     border-radius: 25px 0 0 25px;
     font-size: 16px;
     outline: none;
@@ -167,13 +168,13 @@ header img {
 }
 
 .search-container input:focus {
-    border-color: var(--color-resaltar);
+    border-color: var(--color-terciario);
 }
 
 .search-container button {
     padding: 10px 20px;
-    border: 2px solid var(--color-resaltar);
-    background-color: var(--color-resaltar);
+    border: 2px solid var(--color-terciario-2);
+    background-color: var(--color-terciario-2);
     color: white;
     border-radius: 0 25px 25px 0;
     cursor: pointer;
@@ -182,7 +183,7 @@ header img {
 }
 
 .search-container button:hover {
-    background-color: var(--color-resaltar);
+    background-color: var(--color-terciario);
 }
 
 /* CATEGORÍAS */
@@ -233,7 +234,7 @@ header img {
 }
 
 .boton:hover {
-    background-color: var(--color-secundario);
+    background-color: var(--color-terciario);
 }
 
 /* BOTÓN ARRIBA */
@@ -241,7 +242,7 @@ header img {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: var(--color-resaltar);
+    background-color: var(--color-terciario-2);
     color: white;
     border: none;
     border-radius: 50%;
@@ -254,7 +255,7 @@ header img {
 }
 
 #scrollTopBtn:hover {
-    background-color: var(--color-resaltar);
+    background-color: var(--color-terciario);
 }
 
 /* Footer */
