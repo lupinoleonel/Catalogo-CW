@@ -100,7 +100,7 @@
                     stock: row.c[8]?.v ? String(row.c[8].v).trim().toLowerCase() : "Sin Stock"
                 };
 
-                if (!item.stock.includes("sin stock")) {
+                if (!item.stock.toLowerCase().includes("sin stock")) {
                     const productDiv = document.createElement('div');
                     productDiv.className = 'product';
 
