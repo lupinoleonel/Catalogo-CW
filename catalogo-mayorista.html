@@ -95,9 +95,9 @@
                 const item = {
                     nombre: row.c[1]?.v || "Sin nombre",
                     precio: row.c[2]?.v || 0,
-                    precioPromo: row.c[7]?.v || 0,
-                    imagen: row.c[4]?.v && row.c[4].v.trim() !== "" ? row.c[4].v : "img/imagen-generica.png",
-                    stock: row.c[8]?.v ? String(row.c[8].v).trim().toLowerCase() : "Sin Stock"
+                    precioPromo: row.c[4]?.v || 0,
+                    imagen: row.c[5]?.v && row.c[5].v.trim() !== "" ? row.c[5].v : "img/imagen-generica.png",
+                    stock: row.c[6]?.v ? String(row.c[6].v).trim().toLowerCase() : "Sin Stock"
                 };
 
                 if (!item.stock.toLowerCase().includes("sin stock")) {
