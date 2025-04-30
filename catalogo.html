@@ -1,0 +1,361 @@
+<!-- Custom Wear CBA - Página de inicio -->
+<!-- Custom Wear CBA - Catálogo de Revendedores -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Catálogo</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        const tipo = new URLSearchParams(location.search).get('tipo') || 'mayorista';
+        window.addEventListener('DOMContentLoaded', () => {
+            document.title = tipo === 'mayorista' ? "Custom Wear (Revendedores)" : "Custom Wear (Minoristas)";
+            const titulo = document.getElementById("catalogo-title");
+            if (titulo) {
+                titulo.innerText = tipo === 'mayorista' ? "Catálogo para Revendedores" : "Catálogo Minorista";
+            }
+        });
+    </script>
+
+</head>
+
+<body>
+    <header>
+        <img src="img/logo-customwear.png" alt="Custom Wear CBA">
+    </header>
+
+    <section class="banner">
+        <img src="img/banner.png" alt="Banner">
+    </section>
+
+    <!-- Botones de categoría -->
+    <div class="categoria-selector">
+        <button onclick="cambiarCategoria(this, 'Caballero')">Caballero</button>
+        <button onclick="cambiarCategoria(this, 'Dama')">Dama</button>
+        <button onclick="cambiarCategoria(this, 'Accesorios')">Accesorios</button>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+
+        <input type="text" id="search" placeholder="Buscar productos..." onkeyup="filterProducts()">
+        <button type="button" onclick="filterProducts()"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+
+    <!-- Botones de subcategoría -->
+    <div class="subcategoria-selector" id="subcategoriaSelector">
+        <button onclick="filtrarSubcategoria('TODOS',  this)">Todos</button>
+        <button onclick="filtrarSubcategoria('BUZOS', this)">Buzos</button>
+        <button onclick="filtrarSubcategoria('CAMPERAS', this)">Camperas</button>
+        <button onclick="filtrarSubcategoria('REMERAS', this)">Remeras</button>
+        <button onclick="filtrarSubcategoria('CHOMBAS', this)">Chombas</button>
+        <button onclick="filtrarSubcategoria('CAMISAS', this)">Camisas</button>
+        <button onclick="filtrarSubcategoria('PANTALONES', this)">Pantalones</button>
+        <button onclick="filtrarSubcategoria('MALLAS', this)">Mallas</button>
+        <button onclick="filtrarSubcategoria('SHORTS', this)">Shorts</button>
+    </div>
+
+    <!-- Selector de subcategoría -->
+    <div class="subcategoria-selector-movil" id="subcategoriaSelector">
+        <select id="subcategoria" onchange="seleccionarSubcategoriaDesdeMenu()">
+            <option value="TODOS">Todos</option>
+            <option value="BUZOS">Buzos</option>
+            <option value="CAMPERAS">Camperas / Rompevientos</option>
+            <option value="REMERAS">Remeras / Musculosas</option>
+            <option value="CHOMBAS">Chombas</option>
+            <option value="CAMISAS">Camisas / Camisacos</option>
+            <option value="PANTALONES">Cargos / Jeans / Jogger</option>
+            <option value="MALLAS">Shorts de Baño</option>
+            <option value="SHORTS">Bermudas / Shorts</option>
+        </select>
+    </div>
+
+    <!-- Contenedor de productos -->
+    <div class="catalog-container">
+        <div id="products"></div>
+    </div>
+
+    <!-- Modal de imagen -->
+    <div id="imgModal" tabindex="-1" aria-hidden="true">
+        <img src="" alt="">
+    </div>
+
+    <!-- Script principal -->
+    <script>
+        let currentSheet = 'Caballero';
+
+        function cambiarCategoria(elemento, categoria) {
+            currentSheet = categoria;
+            subcategoriaSeleccionada = "TODOS"; // Reset subcategoría
+            document.getElementById("subcategoria").value = "TODOS"; // Actualiza selector visual
+            actualizarActivos('categoria-selector', elemento);
+            actualizarActivos('subcategoria-selector', null);
+            history.pushState({ categoria }, '', `?cat=${categoria}`);
+            loadProducts();
+        }
+
+
+        // Función para seleccionar subcategorías
+        function filterProducts() {
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            const filtros = subcategorias[subcategoriaSeleccionada] || [];
+            history.pushState({ categoria: currentSheet, subcategoria: subcategoriaSeleccionada, search: searchTerm }, '', `?cat=${currentSheet}&subcat=${subcategoriaSeleccionada}&search=${encodeURIComponent(searchTerm)}`);
+
+            const products = document.querySelectorAll(".product");
+            products.forEach(product => {
+                const name = product.querySelector("h4").textContent.toLowerCase();
+                product.style.display = name.includes(searchTerm) ? "block" : "none";
+            });
+        }
+
+        // Función para seleccionar subcategoría desde el menú desplegable
+        function filterProducts() {
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            const filtros = subcategorias[subcategoriaSeleccionada] || [];
+            history.pushState({ categoria: currentSheet, subcategoria: subcategoriaSeleccionada, search: searchTerm }, '', `?cat=${currentSheet}&subcat=${subcategoriaSeleccionada}&search=${encodeURIComponent(searchTerm)}`);
+
+            const products = document.querySelectorAll(".product");
+            products.forEach(product => {
+                const name = product.querySelector("h4").textContent.toLowerCase();
+                product.style.display = name.includes(searchTerm) ? "block" : "none";
+            });
+        }
+
+        // Manejo del botón atrás del navegador
+        window.addEventListener('popstate', function (event) {
+            const params = new URLSearchParams(location.search);
+            const cat = params.get('cat') || 'Caballero';
+            const subcat = params.get('subcat') || 'TODOS';
+            const search = params.get('search') || '';
+
+            currentSheet = cat;
+            subcategoriaSeleccionada = subcat;
+
+            // Actualizar buscador
+            document.getElementById("search").value = search;
+            // Actualizar subcategoría
+            document.getElementById("subcategoria").value = subcat;
+
+
+            // Actualizar botones visuales
+            const catContainer = document.getElementsByClassName('categoria-selector')[0];
+            if (catContainer) {
+                const botones = catContainer.getElementsByTagName('button');
+                for (let boton of botones) {
+                    boton.classList.toggle('active', boton.textContent.trim().toLowerCase() === cat.toLowerCase());
+                }
+            }
+
+            const subcatContainer = document.getElementsByClassName('subcategoria-selector')[0];
+            if (subcatContainer) {
+                const botones = subcatContainer.getElementsByTagName('button');
+                for (let boton of botones) {
+                    boton.classList.toggle('active', boton.textContent.toUpperCase().includes(subcat));
+                }
+            }
+
+            // Recargar productos filtrados
+            loadProducts();
+        });
+
+
+
+        // Cargar productos desde Google Sheets
+        async function loadProducts() {
+            const baseURL = 'https://docs.google.com/spreadsheets/d/1uKig237GzsXTYi2aPp-WPm8FOWWsb1QB4M4Wvufw_E8/gviz/tq?tqx=out:json&sheet=';
+            const response = await fetch(baseURL + currentSheet);
+            const text = await response.text();
+            const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+            const jsonData = JSON.parse(jsonText);
+            const rows = jsonData.table.rows;
+
+            const productsContainer = document.getElementById('products');
+            productsContainer.innerHTML = '';
+
+            rows.forEach(row => {
+                const item = {
+                    nombre: row.c[1]?.v || "Sin nombre",
+                    precio: tipo === 'mayorista' ? row.c[2]?.v || 0 : row.c[4]?.v || 0,
+                    precioPromo: tipo === 'mayorista' ? row.c[4]?.v || 0 : row.c[3]?.v || 0,
+                    imagen: row.c[5]?.v && row.c[5].v.trim() !== "" ? row.c[5].v : "img/imagen-generica.png",
+                    stock: row.c[6]?.v ? String(row.c[6].v).trim().toLowerCase() : "Sin Stock"
+                };
+                const tipoPrenda = row.c[0]?.v ? row.c[0].v.substring(0, 4).toUpperCase() : "";
+                const filtros = subcategorias[subcategoriaSeleccionada] || [];
+
+                if (subcategoriaSeleccionada !== "TODOS" && !filtros.includes(tipoPrenda)) {
+                    return; // Si no está en los filtros permitidos, NO lo mostramos
+                }
+
+
+
+                if (!item.stock.toLowerCase().includes("sin stock")) {
+                    const productDiv = document.createElement('div');
+                    productDiv.className = 'product';
+
+                    productDiv.innerHTML = `
+                        <img src="${item.imagen}" alt="${item.nombre}" onerror="this.onerror=null; this.src='img/imagen-generica.png';">
+                        <h4>${item.nombre}</h4>
+                        <div class="price-container">
+                        <p class="price">${tipo === 'mayorista' ? 'Precio Mayorista' : 'Precio'}: $${formatPrice(item.precio)}</p>
+                        <p class="promo-price">${tipo === 'mayorista' ? 'Precio Sugerido' : 'Efectivo / Transferencia'}: $${formatPrice(item.precioPromo)}</p>
+                        </div>
+                    `;
+                    productsContainer.appendChild(productDiv);
+                }
+            });
+        }
+        function formatPrice(value) {
+            if (!value) return '0';
+            return parseFloat(value).toLocaleString('es-AR'); // Formato argentino
+        }
+
+
+        // Carga inicial desde parámetros en la URL
+
+        let subcategoriaSeleccionada = "TODOS";
+
+        const subcategorias = {
+            "TODOS": [],
+            "BUZOS": ["BUZO", "CANG", "SUET"],
+            "CAMPERAS": ["CAMP", "PARK", "ROMP", "CHAQ", "CHAL", "PUFF", "ANOR"],
+            "CHOMBAS": ["CHOM",],
+            "CAMISAS": ["CAMI",],
+            "REMERAS": ["REME", "MUSC", "1702", "1802", "TOPM", "TOPR", "TOPL", "TOPJ", "TOPD", "TOPC", "TOPB", "TOPP",],
+            "PANTALONES": ["PANT", "JEAN", "JOGG", "CARG", "BABU", "CHIN", "CALZ"],
+            "SHORTS": ["BERM", "BERR", "2020", "2021", "SHOR"],
+            "MALLAS": ["MALL",]
+        };
+
+        // Función para filtrar subcategoría
+        function filtrarSubcategoria(subcat, elemento) {
+            subcategoriaSeleccionada = subcat;
+            actualizarActivos('subcategoria-selector', elemento);
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            history.pushState({ categoria: currentSheet, subcategoria: subcategoriaSeleccionada, search: searchTerm }, '', `?cat=${currentSheet}&subcat=${subcat}&search=${encodeURIComponent(searchTerm)}`);
+            loadProducts();
+        }
+
+        // Función para seleccionar subcategoría desde el menú desplegable
+        function seleccionarSubcategoriaDesdeMenu() {
+            const select = document.getElementById("subcategoria");
+            const subcat = select.value;
+
+            subcategoriaSeleccionada = subcat;
+
+            // Guardamos en la URL
+            const searchTerm = document.getElementById("search").value.toLowerCase();
+            history.pushState(
+                { categoria: currentSheet, subcategoria: subcat, search: searchTerm },
+                '',
+                `?cat=${currentSheet}&subcat=${subcat}&search=${encodeURIComponent(searchTerm)}`
+            );
+
+            loadProducts();
+        }
+
+        // Función que actualiza los botones activos
+        function actualizarActivos(selectorClass, elementoActivo) {
+            const container = document.getElementsByClassName(selectorClass)[0];
+            if (container) {
+                const botones = container.getElementsByTagName('button');
+                for (let boton of botones) {
+                    boton.classList.remove('active');
+                }
+                if (elementoActivo) {
+                    elementoActivo.classList.add('active');
+                }
+            }
+        }
+
+        window.onload = () => {
+            const params = new URLSearchParams(location.search);
+            const cat = params.get('cat') || 'Caballero';
+            const search = params.get('search') || '';
+
+            currentSheet = cat;
+
+            loadProducts().then(() => {
+                document.getElementById("search").value = search;
+                filterProducts();
+            });
+        };
+
+        // Ampliar imagen al hacer click y mostrar en modal
+        const modal = document.getElementById("imgModal");
+        const modalImg = modal.querySelector("img");
+
+        document.addEventListener("click", function (e) {
+            if (e.target.tagName === "IMG" && e.target.closest(".product")) {
+                modalImg.src = e.target.src;
+                modal.style.display = "flex";
+                document.body.style.overflow = "hidden";
+
+                // Agrega una entrada al historial para detectar cuando se toca "atrás"
+                history.pushState({ modalOpen: true }, "", "#modal");
+            }
+        });
+
+        // Manejo del cierre del modal
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) cerrarModal();
+        });
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && modal.style.display === "flex") cerrarModal();
+        });
+
+        function cerrarModal() {
+            modal.style.display = "none";
+            modalImg.src = "";
+            document.body.style.overflow = "";
+
+            // Si estamos en el historial del modal, retrocede
+            if (location.hash === "#modal") history.back();
+        }
+
+        // Manejo del cierre del modal al usar el botón "atrás"
+        // Si el usuario toca atrás cuando el modal está abierto, lo cerramos
+        window.addEventListener("popstate", function (event) {
+            if (location.hash === "" && modal.style.display === "flex") {
+                cerrarModal();
+            }
+        });
+
+    </script>
+
+    <!-- Botón flotante para volver arriba -->
+    <button id="scrollTopBtn" title="Volver arriba"><i class="fa-solid fa-circle-chevron-up"></i></button>
+    <script>
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        window.onscroll = function () {
+            if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+                scrollTopBtn.style.display = "block";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+        };
+
+        scrollTopBtn.onclick = function () {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        };
+    </script>
+
+    <footer>
+        <p>Contacto: customwear.cba@gmail.com | WhatsApp: <a href="https://wa.me/+5493518086096" target="_blank">+54 9
+                351 808 6096</a></p>
+        <p>Síguenos en:
+            <a href="https://www.instagram.com/customwear.cba" target="_blank">Instagram</a> |
+            <a href="https://www.facebook.com/customwear.cba" target="_blank">Facebook</a>
+        </p>
+        <p>© 2025 Custom Wear CBA. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>
