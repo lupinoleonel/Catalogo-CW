@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Popins', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: var(--color-fondo);
 }
 
@@ -16,7 +16,7 @@ body {
     --color-secundario: #ffffff;
     --color-terciario: #4a4a4a;
     --color-terciario-2: grey;
-    --color-resaltar: #61a78e; 
+    --color-resaltar: #61a78e;
     /* #61A78E o #F5C518 */
     --color-fondo: ghostwhite;
 }
@@ -36,6 +36,35 @@ header img {
     height: 50px;
 }
 
+/* Ocultar botón hamburguesa en escritorio */
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+    font-size: 24px;
+    color: var(--color-secundario);
+}
+
+/* Navegación visible por defecto en escritorio */
+.nav-links {
+    display: flex;
+    list-style: none;
+}
+
+nav a {
+    color: var(--color-secundario);
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 25px 20px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: var(--color-terciario);
+}
+
+
 /* BANNER */
 .banner {
     display: flex;
@@ -50,7 +79,6 @@ header img {
     padding: 10px;
     object-fit: contain;
     height: auto;
-    object-fit: cover;
     border-radius: 35px;
 }
 
@@ -330,13 +358,54 @@ button.active {
     font-size: 16px;
     transition: background-color 0.3s ease;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
     #products {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    header {
+        display: flex;
+        justify-items: space-between;
+        padding: 20px;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        background-color: var(--color-principal);
+        padding: 10px;
+        position: absolute;
+        top: 90px;
+        left: 0;
+        width: 100%;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+    }
+
+    .nav-links li a {
+        color: var(--color-secundario);
+        text-decoration: none;
+        display: block;
+        font-size: 1rem;
+        padding: 0.8rem;;
+        transition: background-color 0.3s ease;
+    }
+
+    .nav-links li a:hover {
+        background-color: var(--color-terciario);
+    }
+
+    .nav-links.active {
+        display: flex;
     }
 
     .banner img {
@@ -361,7 +430,7 @@ button.active {
     .subcategoria-selector-movil {
         display: flex;
         justify-content: center;
-        font-family: 'Popins', sans-serif;
+        font-family: 'Poppins', sans-serif;
         margin: 15px 0;
         flex-wrap: wrap;
         gap: 10px;
@@ -371,11 +440,6 @@ button.active {
 @media (max-width: 480px) {
     #products {
         grid-template-columns: repeat(1, 1fr);
-    }
-
-    header {
-        flex-direction: column;
-        align-items: center;
     }
 
     .boton {
@@ -390,4 +454,3 @@ button.active {
         width: 100%;
     }
 }
-
