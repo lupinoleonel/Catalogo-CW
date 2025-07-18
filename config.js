@@ -1,31 +1,63 @@
-
 // config.js
 
-// Obtener parámetros de la URL
+// 1. GESTIÓN DEL TIPO DE CATÁLOGO (MINORISTA/MAYORISTA)
+// -----------------------------------------------------------------------------
 const params = new URLSearchParams(window.location.search);
 let tipo = params.get('tipo');
 
-// Si el tipo viene por URL, lo guardamos en localStorage
 if (tipo) {
   localStorage.setItem('tipoCatalogo', tipo);
 } else {
-  // Si no viene por URL, tratamos de obtenerlo del localStorage
   tipo = localStorage.getItem('tipoCatalogo') || 'mayorista';
 }
 
-// Ahora sí podemos usar 'tipo' correctamente en el resto del archivo
-const esMinorista = tipo === 'minorista';
+// 2. CONFIGURACIÓN CENTRALIZADA
+// -----------------------------------------------------------------------------
+const CONFIG = {
+  googleSheetId: '1uKig237GzsXTYi2aPp-WPm8FOWWsb1QB4M4Wvufw_E8',
+  
+  // ¡IMPORTANTE! Reemplazar estos nombres con los encabezados EXACTOS de Google Sheet.
+  nombresColumnas: {
+    codigo: 'Articulo',
+    nombre: 'Nombre',
+    precioMayorista: 'Revendedor',
+    precioSugerido: 'Lista',
+    precioMinorista: 'Lista',
+    precioPromo: 'Efectivo/Transferencia',
+    imagen: 'Foto',
+    stock: 'Stock'
+  },
+  
+  textos: {
+    mayorista: {
+      titulo: "Catálogo Revendedores",
+      tituloPagina: "Custom Wear (Revendedores)",
+      etiquetaPrecio: "Precio Mayorista",
+      etiquetaPromo: "Precio sugerido de venta",
+      bannerUrl: "img/banner-mayo.png"
+    },
+    minorista: {
+      titulo: "Catálogo Minorista",
+      tituloPagina: "Custom Wear (Minoristas)",
+      etiquetaPrecio: "Precio",
+      etiquetaPromo: "Efect. / Transfer.",
+      bannerUrl: "img/banner-mino.png"
+    }
+  },
 
-// Textos personalizados según el tipo
-const textos = {
-  titulo: esMinorista ? 'Catálogo Minorista' : 'Catálogo Revendedor',
-  precio: esMinorista ? 'Precio efectivo/transferencia' : 'Precio revendedor',
-  tipo
+  // Define aquí tus subcategorías. El primer valor es el que se busca en la columna 'Codigo'.
+  subcategorias: {
+    "TODOS": [],
+    "BUZOS": ["BUZO", "CANG", "SUET"],
+    "CAMPERAS": ["CAMP", "PARK", "ROMP", "CHAQ", "CHAL", "PUFF", "ANOR"],
+    "CHOMBAS": ["CHOM"],
+    "CAMISAS": ["CAMI"],
+    "REMERAS": ["REME", "MUSC", "TOPM", "TOPR", "TOPL", "TOPJ", "TOPD", "TOPC", "TOPB", "TOPP"],
+    "PANTALONES": ["PANT", "JEAN", "JOGG", "CARG", "BABU", "CHIN", "CALZ"],
+    "SHORTS": ["BERM", "BERR", "SHOR"],
+    "MALLAS": ["MALL"]
+  }
 };
-
-document.title = textos.titulo;
-document.querySelector('[data-titulo]').textContent = textos.titulo;
-document.querySelector('[data-precio-label]').textContent = textos.precio;
 
 
 

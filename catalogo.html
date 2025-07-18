@@ -1,108 +1,72 @@
-<!-- Custom Wear CBA - Página de inicio -->
-<!-- Custom Wear CBA - Catálogo de Revendedores -->
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="title">Catálogo</title>
+    <title>Catálogo</title>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
     <header>
         <img src="img/logo-customwear.png" alt="Custom Wear CBA">
         <nav>
-            <!-- Botón hamburguesa (solo visible en móvil) -->
             <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú">
                 <i class="fa-solid fa-bars"></i>
             </button>
-
-            <!-- Enlaces de navegación -->
             <ul id="menu" class="nav-links">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="catalogo.html?tipo=minorista">Minoristas</a></li>
                 <li><a href="catalogo.html?tipo=mayorista">Revendedores</a></li>
                 <li><a href="#">Tienda Online (Próximamente)</a></li>
             </ul>
-
         </nav>
     </header>
 
     <section class="banner">
-        <img src="img/banner.png" alt="Banner">
+        <img src="" alt="Banner promocional" id="banner-principal">
     </section>
 
-    <!-- Botones de categoría -->
-    <div class="categoria-selector">
-        <button onclick="cambiarCategoria(this, 'Caballero')">Caballero</button>
-        <button onclick="cambiarCategoria(this, 'Dama')">Dama</button>
-        <button onclick="cambiarCategoria(this, 'Accesorios')">Accesorios</button>
+    <div class="controls-container">
+        <div class="categoria-selector">
+            <button data-categoria="Caballero">Caballero</button>
+            <button data-categoria="Dama">Dama</button>
+            <button data-categoria="Accesorios">Accesorios</button>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Buscar productos..." aria-label="Buscar productos">
+            <button type="button" id="search-button" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+
+        <div class="subcategoria-selector" id="subcategoria-selector-desktop"></div>
+        <div class="subcategoria-selector-movil" id="subcategoria-selector-mobile"></div>
     </div>
 
-    <!-- Barra de búsqueda -->
-    <div class="search-container">
-
-        <input type="text" id="search" placeholder="Buscar productos..." onkeyup="filterProducts()">
-        <button type="button" onclick="filterProducts()"><i class="fa-solid fa-magnifying-glass"></i></button>
-    </div>
-
-    <!-- Botones de subcategoría -->
-    <div class="subcategoria-selector" id="subcategoriaSelector">
-        <button onclick="filtrarSubcategoria('TODOS',  this)">Todos</button>
-        <button onclick="filtrarSubcategoria('BUZOS', this)">Buzos</button>
-        <button onclick="filtrarSubcategoria('CAMPERAS', this)">Camperas</button>
-        <button onclick="filtrarSubcategoria('REMERAS', this)">Remeras</button>
-        <button onclick="filtrarSubcategoria('CHOMBAS', this)">Chombas</button>
-        <button onclick="filtrarSubcategoria('CAMISAS', this)">Camisas</button>
-        <button onclick="filtrarSubcategoria('PANTALONES', this)">Pantalones</button>
-        <button onclick="filtrarSubcategoria('MALLAS', this)">Mallas</button>
-        <button onclick="filtrarSubcategoria('SHORTS', this)">Shorts</button>
-    </div>
-
-    <!-- Selector de subcategoría -->
-    <div class="subcategoria-selector-movil" id="subcategoriaSelector">
-        <select id="subcategoria" onchange="seleccionarSubcategoriaDesdeMenu()">
-            <option value="TODOS">Todos</option>
-            <option value="BUZOS">Buzos</option>
-            <option value="CAMPERAS">Camperas / Rompevientos</option>
-            <option value="REMERAS">Remeras / Musculosas</option>
-            <option value="CHOMBAS">Chombas</option>
-            <option value="CAMISAS">Camisas / Camisacos</option>
-            <option value="PANTALONES">Cargos / Jeans / Jogger</option>
-            <option value="MALLAS">Shorts de Baño</option>
-            <option value="SHORTS">Bermudas / Shorts</option>
-        </select>
-    </div>
-
-    <!-- Contenedor de productos -->
     <div class="catalog-container">
-        <div id="products"></div>
+        <div id="products" aria-live="polite"></div>
     </div>
 
-    <!-- Modal de imagen -->
     <div id="imgModal" tabindex="-1" aria-hidden="true">
-        <img src="" alt="">
+        <img src="" alt="Imagen ampliada del producto">
     </div>
 
-    <!-- Botón flotante para volver arriba -->
-    <button id="scrollTopBtn" title="Volver arriba"><i class="fa-solid fa-circle-chevron-up"></i></button>
+    <div id="floating-buttons">
+        <a href="https://wa.me/+5493518086096" target="_blank" rel="noopener noreferrer" id="whatsappBtn" class="floating-btn" title="Contactar por WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <button id="scrollTopBtn" class="floating-btn" title="Volver arriba">
+            <i class="fa-solid fa-circle-chevron-up"></i>
+        </button>
+    </div>
 
-    <!-- Script de configuración y catálogo -->
     <script src="config.js"></script>
     <script src="catalogo.js"></script>
 
     <footer>
-        <p>Contacto: customwear.cba@gmail.com | WhatsApp: <a href="https://wa.me/+5493518086096" target="_blank">+54 9
-                351 808 6096</a></p>
-        <p>Síguenos en:
-            <a href="https://www.instagram.com/customwear.cba" target="_blank">Instagram</a> |
-            <a href="https://www.facebook.com/customwear.cba" target="_blank">Facebook</a>
-        </p>
+        <p>Contacto: customwear.cba@gmail.com | WhatsApp: <a href="https://wa.me/+5493518086096" target="_blank">+54 9 351 808 6096</a></p>
         <p>© 2025 Custom Wear CBA. Todos los derechos reservados.</p>
+        <p class="dev-credit">Desarrollado con ❤️ por <a href="#" target="_blank" rel="noopener noreferrer">Leonel Lupino</a></p>
     </footer>
 </body>
-
 </html>
