@@ -20,7 +20,7 @@ body {
     --color-principal: #1A1A1A;
     --color-secundario: #ffffff;
     --color-terciario: #4a4a4a;
-    --color-resaltar: #61a78e;
+    --color-resaltar: #3498db;
 }
 
 /* HEADER */
@@ -110,5 +110,6 @@ footer a {
     .botones {
         flex-direction: column;
         align-items: center;
+        margin: auto auto;
     }
 }

@@ -16,7 +16,7 @@ body {
     --color-secundario: #ffffff;
     --color-terciario: #4a4a4a;
     --color-terciario-2: grey;
-    --color-resaltar: #61a78e;
+    --color-resaltar: #3498db; /* Color para resaltar enlaces */
     --color-nuevo: #3498db;
     --color-ultimas: #e67e22;
     --color-reingreso: #9b59b6; /* Nuevo color para reingresos */
@@ -75,10 +75,11 @@ nav a:hover {
 }
 
 .banner img {
-    padding: 10px;
+
     object-fit: contain;
     height: auto;
     border-radius: 35px;
+    border: 1px solid var(--color-principal);
 }
 
 /* CONTENEDOR DE PRODUCTOS */
@@ -97,15 +98,18 @@ nav a:hover {
 
 /* TARJETA DE PRODUCTO */
 .product {
-    position: relative; 
+    position: relative; /* Clave para posicionar las etiquetas */
     background: white;
     border-radius: 15px;
     box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
     padding: 15px;
     text-align: center;
-    transition: all 0.3s ease-in-out;
-    overflow: hidden; 
-    border: 2px solid transparent; /* Borde transparente por defecto */
+    transition: transform 0.3s ease-in-out;
+    border: 2px solid;
+    overflow: hidden;
+}
+.product:hover {
+    transform: translateY(-5px);
 }
 
 /* BORDE PARA PRODUCTOS NUEVOS */
@@ -115,22 +119,23 @@ nav a:hover {
 }
 
 
-/* ETIQUETAS DE PRODUCTO (CORREGIDO) */
+/* ETIQUETAS DE PRODUCTO */
 .product-badge {
     position: absolute;
     top: 18px;
     left: -40px;
     transform: rotate(-45deg);
-    width: 160px; /* Ancho fijo para consistencia */
-    padding: 4px 0; /* Padding vertical, horizontal lo da el centrado */
+    width: 160px;
+    padding: 4px 0;
     color: white;
     font-size: 12px;
     font-weight: bold;
-    text-align: center; /* Centrado de texto */
+    text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 10;
 }
 
 .badge-new { background-color: var(--color-nuevo); }
@@ -139,9 +144,9 @@ nav a:hover {
 
 
 .product img {
+    width: 100%;
     height: 250px;
     object-fit: contain;
-    background-color: white;
     padding: 10px;
     border-radius: 10px;
     cursor: pointer;
@@ -174,8 +179,9 @@ nav a:hover {
 }
 
 .product h4 {
-    font-size: 18px;
+    font-size: 1rem;
     margin: 10px 0;
+    min-height: 40px;
 }
 
 /* FORMATO DE PRECIO */
@@ -216,7 +222,7 @@ nav a:hover {
 .search-container input {
     width: 60%;
     padding: 10px;
-    border: 2px solid var(--color-terciario-2);
+    border: 1px solid var(--color-principal);
     border-radius: 25px 0 0 25px;
     font-size: 16px;
     outline: none;
@@ -229,8 +235,8 @@ nav a:hover {
 
 .search-container button {
     padding: 10px 20px;
-    border: 2px solid var(--color-terciario-2);
-    background-color: var(--color-terciario-2);
+    border: 1px solid var(--color-principal);
+    background-color: var(--color-principal);
     color: white;
     border-radius: 0 25px 25px 0;
     cursor: pointer;
@@ -255,22 +261,74 @@ nav a:hover {
     padding: 10px 20px;
     font-size: 16px;
     border: none;
-    background-color: var(--color-principal);
-    color: var(--color-secundario);
+    border: 1px solid var(--color-principal);
+    background-color: var(--color-secundario);
+    color: var(--color-principal);
     border-radius: 24px;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
 }
 
 .categoria-selector button:hover {
     background-color: var(--color-terciario);
 }
 
-button.active {
-    background-color: var(--color-terciario) !important;
-    color: var(--color-resaltar) !important;
+.categoria-selector .active {
+    background-color: var(--color-principal) !important;
+    color: var(--color-secundario) !important;
+    border-color: var(--color-principal) !important;
     font-weight: bold;
+}
+
+/* SUBCATEGORIAS */
+.subcategoria-selector {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.subcategoria-selector button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: 1px solid var(--color-principal);
+    background-color: var(--color-secundario);
+    color: var(--color-principal);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.subcategoria-selector button.active {
+    background-color: var(--color-principal) !important;
+    color: var(--color-secundario) !important;
+    border-color: var(--color-principal) !important;
+    font-weight: bold;
+}
+
+
+/* SUBCATEGORIAS MOVIL */
+.subcategoria-selector-movil {
+    display: none;
+}
+
+.subcategoria-selector-movil label {
+    color: var(--color-principal);
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.subcategoria-selector-movil select {
+    background-color: var(--color-secundario);
+    color: var(--color-principal);
+    border: 1px solid var(--color-principal);
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -286,7 +344,7 @@ button.active {
 }
 
 .floating-btn {
-    background-color: var(--color-terciario-2);
+    background-color: var(--color-principal);
     color: white;
     border: none;
     border-radius: 50%;
@@ -335,54 +393,6 @@ footer a {
     text-decoration: none;
 }
 
-/* SUBCATEGORIAS */
-.subcategoria-selector {
-    display: flex;
-    justify-content: center;
-    margin: 15px 0;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.subcategoria-selector button {
-    padding: 8px 16px;
-    font-size: 14px;
-    border: 1px solid var(--color-principal);
-    background-color: var(--color-secundario);
-    color: var(--color-principal);
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.subcategoria-selector button.active {
-    background-color: var(--color-principal) !important;
-    color: var(--color-secundario) !important;
-    border-color: var(--color-principal) !important;
-}
-
-
-/* SUBCATEGORIAS MOVIL */
-.subcategoria-selector-movil {
-    display: none;
-}
-
-.subcategoria-selector-movil label {
-    color: var(--color-principal);
-    font-weight: 500;
-    font-size: 16px;
-}
-
-.subcategoria-selector-movil select {
-    background-color: var(--color-secundario);
-    color: var(--color-principal);
-    border: 1px solid var(--color-principal);
-    border-radius: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
 
 /* ESTILOS PARA CRÉDITO DE DESARROLLADOR */
 .dev-credit {
@@ -447,6 +457,16 @@ footer a {
     .search-container {
         width: 90%;
         max-width: 400px;
+    }
+
+    .categoria-selector {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    .categoria-selector button {
+        padding: 10px;
+        font-size: 14px;
     }
 
     .subcategoria-selector {
