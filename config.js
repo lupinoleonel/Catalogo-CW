@@ -49,7 +49,7 @@ const CONFIG = {
   subcategorias: {
     "TODOS": [],
     "BUZOS": ["BUZO", "CANG", "SUET"],
-    "CAMPERAS": ["CAMP", "PARK", "ROMP", "CHAQ", "CHAL", "PUFF", "ANOR"],
+    "CAMPERAS": ["CAMP", "PARK", "ROMP", "CHAQ", "CHAL", "PUFF", "ANOR", "CHAC"],
     "CHOMBAS": ["CHOM"],
     "CAMISAS": ["CAMI"],
     "REMERAS": ["REME", "MUSC", "TOPM", "TOPR", "TOPL", "TOPJ", "TOPD", "TOPC", "TOPB", "TOPP"],
