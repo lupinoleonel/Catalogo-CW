@@ -3,7 +3,7 @@
 // =================================================================================
 // Descripción: Script para cargar, filtrar y mostrar productos desde Google Sheets.
 // Autor: Leonel Lupino
-// Versión: 2.2 (Nuevas Etiquetas y Ordenamiento)
+// Versión: 2.3 (Correccion parametros URL)
 // =================================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -283,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function actualizarURL() {
         const params = new URLSearchParams({
+            tipo: tipo,
             cat: state.categoriaActual,
             subcat: state.subcategoriaActual,
             search: state.terminoBusqueda
