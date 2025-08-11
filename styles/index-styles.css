@@ -1,6 +1,13 @@
 /* Estilos solo para la página de inicio (index.html) */
+/* =================================================================================
+// H O J A  D E  E S T I L O S  I N D E X . H T M L  -  C U S T O M   W E A R
+// =================================================================================
+// Versión: 1.1 
+// =================================================================================*/
 
-/* RESET Y FUENTE */
+/* ============================================== */
+/*                 RESET Y FUENTE                 */
+/* ============================================== */
 * {
     margin: 0;
     padding: 0;
@@ -23,7 +30,9 @@ body {
     --color-resaltar: #3498db;
 }
 
-/* HEADER */
+/* ============================================== */
+/*                      HEADER                    */
+/* ============================================== */
 header {
     padding: 10px;
     text-align: center;
@@ -36,7 +45,9 @@ header img {
     height: 50px;
 }
 
-/* BANNER */
+/* ============================================== */
+/*                      BANNER                    */
+/* ============================================== */
 .banner {
     padding: 20px 10px;
     text-align: center;
@@ -48,7 +59,9 @@ header img {
     border-radius: 15px;
 }
 
-/* BOTONES */
+/* ============================================== */
+/*                     BOTONES                    */
+/* ============================================== */
 .botones {
     display: flex;
     justify-content: center;
@@ -75,7 +88,9 @@ header img {
     background-color: var(--color-terciario);
 }
 
-/* FOOTER */
+/* ============================================== */
+/*                    FOOTER                      */
+/* ============================================== */
 footer {
     background-color: var(--color-principal);
     color: white;
@@ -90,7 +105,9 @@ footer a {
     text-decoration: none;
 }
 
-/* ESTILOS PARA CRÉDITO DE DESARROLLADOR */
+/* ============================================== */
+/*           CRÉDITO DE DESARROLLADOR             */
+/* ============================================== */
 .dev-credit {
     margin-top: 15px;
     font-size: 0.8rem;
@@ -105,7 +122,9 @@ footer a {
     text-decoration: underline;
 }
 
-/* RESPONSIVE */
+/* ============================================== */
+/*                   RESPONSIVO                   */
+/* ============================================== */
 @media (max-width: 768px) {
     .botones {
         flex-direction: column;

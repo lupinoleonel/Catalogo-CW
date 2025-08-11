@@ -1,9 +1,7 @@
 // =================================================================================
 // C A T Á L O G O   D E   P R O D U C T O S  -  C U S T O M   W E A R
 // =================================================================================
-// Descripción: Script para cargar, filtrar y mostrar productos desde Google Sheets.
-// Autor: Leonel Lupino
-// Versión: 2.3 (Correccion parametros URL)
+// Versión: 3.1 (Sección de Liquidación Plegable)
 // =================================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,7 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const DOM = {
         tituloPagina: document.querySelector('title'),
         bannerPrincipal: document.getElementById('banner-principal'),
-        contenedorProductos: document.getElementById('products'),
+        seccionLiquidacion: document.getElementById('liquidacion-section'),
+        liquidacionHeader: document.getElementById('liquidacion-header'),
+        contenedorLiquidacion: document.getElementById('liquidacion-products'),
+        contenedorProductosRegulares: document.getElementById('products'),
         inputBusqueda: document.getElementById('search'),
         selectorSubcatDesktop: document.getElementById('subcategoria-selector-desktop'),
         selectorSubcatMobile: document.getElementById('subcategoria-selector-mobile'),
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initStateFromURL();
         setupEventListeners();
         actualizarUICompleta();
-        cargarProductos();
+        cargarYProcesarProductos();
     }
 
     function initStateFromURL() {
@@ -47,9 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.inputBusqueda.value = state.terminoBusqueda;
     }
 
-    // --- 3. MANEJO DE DATOS (GOOGLE SHEETS) ---
-    async function cargarProductos() {
-        mostrarMensajeCarga(true);
+    // --- 3. MANEJO DE DATOS Y RENDERIZADO PRINCIPAL ---
+    async function cargarYProcesarProductos() {
+        mostrarMensajeCarga(true, DOM.contenedorProductosRegulares);
+        DOM.seccionLiquidacion.classList.add('hidden');
         const url = `https://docs.google.com/spreadsheets/d/${CONFIG.googleSheetId}/gviz/tq?tqx=out:json&sheet=${state.categoriaActual}`;
         
         try {
@@ -58,14 +60,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = await response.text();
             const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
             const data = JSON.parse(jsonText);
-            state.productos = parseDataByHeaders(data.table);
-            filtrarYRenderizarProductos();
+            
+            const todosLosProductos = parseDataByHeaders(data.table);
+            separarYRenderizarProductos(todosLosProductos);
+
         } catch (error) {
             console.error('Error al cargar los productos:', error);
-            mostrarMensajeError();
+            mostrarMensajeError(DOM.contenedorProductosRegulares);
         } finally {
-            mostrarMensajeCarga(false);
+            mostrarMensajeCarga(false, DOM.contenedorProductosRegulares);
         }
+    }
+    
+    function separarYRenderizarProductos(productos) {
+        const colLiquidacion = CONFIG.nombresColumnas.liquidacion;
+        let productosRegulares = [];
+        let productosEnLiquidacion = [];
+
+        if (tipo === 'minorista') {
+            for (const producto of productos) {
+                const tipoLiquidacion = String(producto[colLiquidacion]);
+                if (tipoLiquidacion === '5' || tipoLiquidacion === '6') {
+                    productosEnLiquidacion.push(producto);
+                } else {
+                    productosRegulares.push(producto);
+                }
+            }
+            renderizarSeccionLiquidacion(productosEnLiquidacion);
+        } else {
+            productosRegulares = productos;
+            renderizarSeccionLiquidacion([]);
+        }
+        
+        state.productos = productosRegulares;
+        filtrarYRenderizarRegulares();
     }
 
     function parseDataByHeaders(table) {
@@ -83,16 +111,65 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // --- 4. RENDERIZADO Y ACTUALIZACIÓN DE LA UI ---
-    function actualizarUICompleta() {
-        const textosTipo = CONFIG.textos[tipo];
-        DOM.tituloPagina.textContent = textosTipo.tituloPagina;
-        DOM.bannerPrincipal.src = textosTipo.bannerUrl;
-        actualizarBotonesActivos('.categoria-selector button', 'data-categoria', state.categoriaActual);
-        generarControlesSubcategoria();
+    // --- 4. LÓGICA DE RENDERIZADO ESPECÍFICO ---
+
+    function renderizarSeccionLiquidacion(items) {
+        DOM.contenedorLiquidacion.innerHTML = '';
+        if (items.length > 0 && tipo === 'minorista') {
+            DOM.seccionLiquidacion.classList.remove('hidden');
+            const fragment = document.createDocumentFragment();
+            items.forEach(item => fragment.appendChild(crearTarjetaLiquidacion(item)));
+            DOM.contenedorLiquidacion.appendChild(fragment);
+        } else {
+            DOM.seccionLiquidacion.classList.add('hidden');
+        }
     }
 
-    function filtrarYRenderizarProductos() {
+    function crearTarjetaLiquidacion(item) {
+        const { nombresColumnas } = CONFIG;
+        const precioOriginal = parseFloat(item[nombresColumnas.precioMinorista]);
+        const tipoLiquidacion = String(item[nombresColumnas.liquidacion]);
+        
+        // Lógica de imagen mejorada para ignorar espacios en blanco
+        const nombreImagen = item[nombresColumnas.imagen]?.trim();
+        const imagen = nombreImagen 
+            ? `${CONFIG.rutaBaseImagenes}${nombreImagen}` 
+            : 'img/imagen-generica.png';
+
+        let descuento = 0;
+        let condicion = '';
+
+        if (tipoLiquidacion === '5') {
+            descuento = 0.35;
+            condicion = '(Sólo Efectivo/Transferencia)';
+        } else if (tipoLiquidacion === '6') {
+            descuento = 0.50;
+            condicion = '(Sólo Efectivo/Transferencia)';
+        }
+
+        const precioFinal = precioOriginal * (1 - descuento);
+
+        const productDiv = document.createElement('div');
+        productDiv.className = 'product-liquidacion';
+        productDiv.innerHTML = `
+            <img 
+                src="${imagen}" 
+                alt="${item[nombresColumnas.nombre]}"
+                loading="lazy"
+                onerror="this.onerror=null; this.src='img/imagen-generica.png';"
+            >
+            <h4>${item[nombresColumnas.nombre]}</h4>
+            <div class="precio-liquidacion-container">
+                <span class="precio-original">$${formatearPrecio(precioOriginal)}</span>
+                <span class="descuento-tag">${descuento * 100}% OFF</span>
+                <span class="precio-final">$${formatearPrecio(precioFinal)}</span>
+                ${condicion ? `<span class="condicion-pago">${condicion}</span>` : ''}
+            </div>
+        `;
+        return productDiv;
+    }
+    
+    function filtrarYRenderizarRegulares() {
         const { productos, subcategoriaActual, terminoBusqueda } = state;
         const filtrosSubcat = CONFIG.subcategorias[subcategoriaActual] || [];
         const { codigo, nombre, stock } = CONFIG.nombresColumnas;
@@ -123,28 +200,30 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        renderizarProductos();
+        renderizarProductosRegulares();
         actualizarURL();
     }
 
-    function renderizarProductos() {
-        DOM.contenedorProductos.innerHTML = '';
-        if (state.productosFiltrados.length === 0) {
-            DOM.contenedorProductos.innerHTML = '<p class="info-msg">No se encontraron productos con estos filtros.</p>';
-            return;
+    function renderizarProductosRegulares() {
+        DOM.contenedorProductosRegulares.innerHTML = '';
+        if (state.productosFiltrados.length === 0 && DOM.contenedorLiquidacion.innerHTML === '') {
+             DOM.contenedorProductosRegulares.innerHTML = '<p class="info-msg">No se encontraron productos con estos filtros.</p>';
+        } else if (state.productosFiltrados.length > 0) {
+            const fragment = document.createDocumentFragment();
+            state.productosFiltrados.forEach(item => fragment.appendChild(crearTarjetaProductoRegular(item)));
+            DOM.contenedorProductosRegulares.appendChild(fragment);
         }
-        const fragment = document.createDocumentFragment();
-        state.productosFiltrados.forEach(item => fragment.appendChild(crearElementoProducto(item)));
-        DOM.contenedorProductos.appendChild(fragment);
     }
-
-    function crearElementoProducto(item) {
+    
+    function crearTarjetaProductoRegular(item) {
         const { nombresColumnas, textos } = CONFIG;
         const esMayorista = tipo === 'mayorista';
-
         const precio = esMayorista ? item[nombresColumnas.precioMayorista] : item[nombresColumnas.precioMinorista];
         const precioPromo = esMayorista ? item[nombresColumnas.precioSugerido] : item[nombresColumnas.precioPromo];
-        const imagen = item[nombresColumnas.imagen] || 'img/imagen-generica.png';
+        const nombreImagen = item[nombresColumnas.imagen];
+        const imagen = nombreImagen 
+            ? `${CONFIG.rutaBaseImagenes}${nombreImagen}` 
+            : 'img/imagen-generica.png';
         const stockValueRaw = item[nombresColumnas.stock];
         const stockValueLower = String(stockValueRaw).trim().toLowerCase();
         
@@ -154,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (stockValueLower === 'nuevo') {
             badgeHTML = '<div class="product-badge badge-new">Nuevo</div>';
-            productClasses += ' product-new'; // Añade la clase para el borde
+            productClasses += ' product-new';
         } else if (stockValueLower === 'reingreso') {
             badgeHTML = '<div class="product-badge badge-reentry">Reingreso</div>';
         } else if (!isNaN(stockValueRaw) && Number(stockValueRaw) <= 5 && Number(stockValueRaw) > 0) {
@@ -180,6 +259,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return productDiv;
     }
 
+    // --- 5. FUNCIONES DE UI Y EVENTOS ---
+    function actualizarUICompleta() {
+        const textosTipo = CONFIG.textos[tipo];
+        DOM.tituloPagina.textContent = textosTipo.tituloPagina;
+        DOM.bannerPrincipal.src = textosTipo.bannerUrl;
+        actualizarBotonesActivos('.categoria-selector button', 'data-categoria', state.categoriaActual);
+        generarControlesSubcategoria();
+    }
+
     function generarControlesSubcategoria() {
         const subcategorias = Object.keys(CONFIG.subcategorias);
         DOM.selectorSubcatDesktop.innerHTML = subcategorias.map(subcat => `<button data-subcategoria="${subcat}">${subcat}</button>`).join('');
@@ -192,12 +280,12 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarBotonesActivos('.subcategoria-selector button', 'data-subcategoria', state.subcategoriaActual);
     }
 
-    function mostrarMensajeCarga(mostrar) {
-        if (mostrar) DOM.contenedorProductos.innerHTML = '<p class="info-msg">Cargando productos...</p>';
+    function mostrarMensajeCarga(mostrar, contenedor) {
+        if (mostrar) contenedor.innerHTML = '<p class="info-msg">Cargando productos...</p>';
     }
     
-    function mostrarMensajeError() {
-        DOM.contenedorProductos.innerHTML = '<p class="info-msg error">Hubo un error al cargar el catálogo. Intenta de nuevo más tarde.</p>';
+    function mostrarMensajeError(contenedor) {
+        contenedor.innerHTML = '<p class="info-msg error">Hubo un error al cargar el catálogo. Intenta de nuevo más tarde.</p>';
     }
 
     function actualizarBotonesActivos(selector, dataAttribute, valorActivo) {
@@ -206,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. MANEJO DE EVENTOS ---
     function setupEventListeners() {
         document.querySelector('.categoria-selector').addEventListener('click', e => {
             if (e.target.tagName === 'BUTTON') {
@@ -215,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.terminoBusqueda = '';
                 DOM.inputBusqueda.value = '';
                 actualizarUICompleta();
-                cargarProductos();
+                cargarYProcesarProductos();
             }
         });
         
@@ -224,31 +311,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.subcategoriaActual = e.target.getAttribute('data-subcategoria');
                 document.getElementById('subcat-select').value = state.subcategoriaActual;
                 actualizarBotonesActivos('.subcategoria-selector button', 'data-subcategoria', state.subcategoriaActual);
-                filtrarYRenderizarProductos();
+                filtrarYRenderizarRegulares();
             }
         });
 
         DOM.selectorSubcatMobile.addEventListener('change', e => {
             state.subcategoriaActual = e.target.value;
             actualizarBotonesActivos('.subcategoria-selector button', 'data-subcategoria', state.subcategoriaActual);
-            filtrarYRenderizarProductos();
+            filtrarYRenderizarRegulares();
         });
         
-        DOM.inputBusqueda.addEventListener('keyup', () => {
+        DOM.inputBusqueda.addEventListener('input', () => {
             state.terminoBusqueda = DOM.inputBusqueda.value;
-            filtrarYRenderizarProductos();
-        });
-        document.getElementById('search-button').addEventListener('click', () => {
-            state.terminoBusqueda = DOM.inputBusqueda.value;
-            filtrarYRenderizarProductos();
+            filtrarYRenderizarRegulares();
         });
         
-        DOM.contenedorProductos.addEventListener('click', e => {
-            if (e.target.tagName === 'IMG' && e.target.closest('.product')) {
-                DOM.imgModal.src = e.target.src;
-                DOM.modalImagen.style.display = "flex";
-                document.body.style.overflow = "hidden";
-            }
+        // Listener para Clic en Imágenes (ambas secciones)
+        [DOM.contenedorProductosRegulares, DOM.contenedorLiquidacion].forEach(container => {
+            container.addEventListener('click', e => {
+                const productCard = e.target.closest('.product, .product-liquidacion');
+                if (e.target.tagName === 'IMG' && productCard) {
+                    DOM.imgModal.src = e.target.src;
+                    DOM.modalImagen.style.display = "flex";
+                    document.body.style.overflow = "hidden";
+                }
+            });
         });
 
         DOM.modalImagen.addEventListener('click', () => cerrarModal());
@@ -264,11 +351,24 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('popstate', () => {
             initStateFromURL();
             actualizarUICompleta();
-            cargarProductos();
+            cargarYProcesarProductos();
         });
+
+        // Listener para sección plegable
+        if (DOM.liquidacionHeader) {
+            DOM.liquidacionHeader.addEventListener('click', toggleSeccionLiquidacion);
+        }
     }
 
     // --- 6. FUNCIONES UTILITARIAS ---
+    function toggleSeccionLiquidacion() {
+        DOM.contenedorLiquidacion.classList.toggle('collapsed-content');
+        const toggleBtn = document.getElementById('toggle-liquidacion-btn');
+        if (toggleBtn) {
+            toggleBtn.classList.toggle('collapsed');
+        }
+    }
+
     function cerrarModal() {
         DOM.modalImagen.style.display = "none";
         DOM.imgModal.src = "";

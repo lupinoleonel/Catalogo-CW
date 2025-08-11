@@ -1,4 +1,8 @@
-// config.js
+// =================================================================================
+// C O N F I G U R A C I Ó N   -  C U S T O M   W E A R
+// =================================================================================
+// Versión: 3.1 
+// =================================================================================
 
 // 1. GESTIÓN DEL TIPO DE CATÁLOGO (MINORISTA/MAYORISTA)
 // -----------------------------------------------------------------------------
@@ -15,6 +19,8 @@ if (tipo) {
 // -----------------------------------------------------------------------------
 const CONFIG = {
   googleSheetId: '1uKig237GzsXTYi2aPp-WPm8FOWWsb1QB4M4Wvufw_E8',
+
+  rutaBaseImagenes: 'https://sandybrown-marten-662797.hostingersite.com//fotos_cw/',
   
   // ¡IMPORTANTE! Reemplazar estos nombres con los encabezados EXACTOS de Google Sheet.
   nombresColumnas: {
@@ -24,8 +30,9 @@ const CONFIG = {
     precioSugerido: 'Lista',
     precioMinorista: 'Lista',
     precioPromo: 'Efectivo/Transferencia',
-    imagen: 'Foto',
-    stock: 'Stock'
+    imagen: 'Imagenes',
+    stock: 'Stock',
+    liquidacion: 'Liquidacion'
   },
   
   textos: {
@@ -58,6 +65,5 @@ const CONFIG = {
     "MALLAS": ["MALL"]
   }
 };
-
 
 
