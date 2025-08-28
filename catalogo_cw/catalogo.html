@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <img src="img/logo-customwear.png" alt="Custom Wear CBA">
+        <nav>
+            <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <ul id="menu" class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="catalogo.html?tipo=minorista">Minoristas</a></li>
+                <li><a href="catalogo.html?tipo=mayorista">Revendedores</a></li>
+                <li><a href="#">Tienda Online (Próximamente)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="banner">
+        <img src="" alt="Banner promocional" id="banner-principal">
+    </section>
+
+    <div class="controls-container">
+        <div class="categoria-selector">
+            <button data-categoria="Caballero">CABALLERO</button>
+            <button data-categoria="Dama">DAMA</button>
+            <button data-categoria="Accesorios">ACCESORIOS</button>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Buscar productos..." aria-label="Buscar productos">
+            <button type="button" id="search-button" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+
+        <div class="subcategoria-selector" id="subcategoria-selector-desktop"></div>
+        <div class="subcategoria-selector-movil" id="subcategoria-selector-mobile"></div>
+    </div>
+
+    <section id="liquidacion-section" class="hidden">
+        <h2 id="liquidacion-header" title="Ocultar/Mostrar Sección">
+             ¡Liquidación! 
+            <span id="toggle-liquidacion-btn" class="toggle-btn">
+                <i class="fa-solid fa-chevron-up"></i>
+            </span>
+        </h2>
+        <div id="liquidacion-products" class="products-grid">
+            </div>
+    </section>
+
+    <div class="catalog-container">
+        <div id="products" aria-live="polite"></div>
+    </div>
+
+    <div id="imgModal" tabindex="-1" aria-hidden="true">
+        <img src="" alt="Imagen ampliada del producto">
+    </div>
+
+    <div id="floating-buttons">
+        <a href="https://wa.me/+5493518086096" target="_blank" rel="noopener noreferrer" id="whatsappBtn" class="floating-btn" title="Contactar por WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <button id="scrollTopBtn" class="floating-btn" title="Volver arriba">
+            <i class="fa-solid fa-circle-chevron-up"></i>
+        </button>
+    </div>
+
+    <script src="config.js?v=3.1"></script>
+    <script src="catalogo.js?v=3.1"></script>
+
+    <footer>
+        <p>Contacto: customwear.cba@gmail.com | WhatsApp: <a href="https://wa.me/+5493518086096" target="_blank">+54 9 351 808 6096</a></p>
+        <p>© 2025 Custom Wear CBA. Todos los derechos reservados.</p>
+        <p class="dev-credit">Desarrollado con ❤️ por <a href="https://www.instagram.com/lupinoleonel" target="_blank" rel="noopener noreferrer">Leonel Lupino</a></p>
+    </footer>
+</body>
+</html>
